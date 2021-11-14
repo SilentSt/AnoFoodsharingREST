@@ -1,4 +1,4 @@
-from typing import Optional, MutableMapping, List, Union
+from typing import Optional, MutableMapping, List, Union, Any
 from datetime import datetime, timedelta
 
 from fastapi import Depends, HTTPException
@@ -6,9 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from starlette import status
 
-from app.db.crud import CrudUsers
-from app.db.models import UsersDatabaseModel
-from app.db.deps import get_crud_users
+from app.db.crud import CrudDatabase
 from app.security.security import verify_password
 from settings import settings
 
@@ -23,8 +21,8 @@ async def authenticate(
     *,
     email: str,
     password: str,
-    db: CrudUsers,
-) -> Optional[UsersDatabaseModel]:
+    db: CrudDatabase,
+) -> Optional[Any]:
     user = await db.get_user_by_email(email)
     if not user:
         return None
@@ -57,7 +55,7 @@ def _create_token(
 
 
 async def get_current_user(
-    db: CrudUsers = Depends(get_crud_users), token: str = Depends(oauth2_scheme)
+    db: CrudDatabase = Depends(CrudDatabase), token: str = Depends(oauth2_scheme)
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

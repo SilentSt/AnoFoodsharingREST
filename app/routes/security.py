@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from app.db.crud import CrudUsers
-from app.db.deps import get_crud_users
+from app.db.crud import CrudDatabase
 from app.security.auth import authenticate, create_access_token
 
 security_router = APIRouter()
@@ -9,7 +8,7 @@ security_router = APIRouter()
 
 @security_router.post("/login")
 async def login(
-    db: CrudUsers = Depends(get_crud_users),
+    db: CrudDatabase = Depends(CrudDatabase),
     form_data: OAuth2PasswordRequestForm = Depends()
 ):
 
